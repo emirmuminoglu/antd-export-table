@@ -4,6 +4,7 @@ import objectPath from "object-path";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from 'jspdf-autotable';
+import "./font";
 
 const useExport = <RecordType extends object>({
   columns,
@@ -22,16 +23,19 @@ const useExport = <RecordType extends object>({
     const headerRow = sheet.addRow();
     columns.forEach(({ title, render }) => {
       if (render) return;
-      headerRow.addCell(title);
+      const cell = headerRow.addCell();
+      cell.value = title;
     });
     data.forEach((record) => {
       const row = sheet.addRow();
-      columns.forEach(({ dataIndex }) => {
-        row.addCell(objectPath.get(record, dataIndex as objectPath.Path));
+      columns.forEach(({ dataIndex, render }) => {
+        if (render) return;
+        const cell = row.addCell();
+        cell.value = objectPath.get(record, dataIndex as objectPath.Path);
       });
     });
 
-    file.saveAs('blob').then(blob => {
+    file.saveAs('blob').then((blob: Blob) => {
       saveAs(blob, `${fileName}.xlsx`);
     })
   };
@@ -45,23 +49,31 @@ const useExport = <RecordType extends object>({
       csv += `${title.replaceAll('"', '""')}`;
     });
 
+    csv += "\n";
+
     data.forEach((record) => {
-      columns.forEach(({ dataIndex }, index) => {
+      columns.forEach(({ dataIndex, render }, index) => {
+        if (render) return;
+
         if (index !== 0) csv += ",";
 
         csv += `${objectPath.get(record, dataIndex as objectPath.Path).replaceAll('"', '""')}`;
       });
+      csv += "\n";
     });
 
-    saveAs(csv, `${fileName}.csv`);
+    saveAs(new Blob([csv]), `${fileName}.csv`);
   }
 
   const onPdfPrint = () => {
     const doc = new jsPDF();
+    doc.setFont('FreeSans');
 
     autoTable(doc, {
-      head: columns.map(c => c.title),
-      body: data.map(r => columns.map(c => objectPath.get(r, c.dataIndex as objectPath.Path))),
+      styles: { font: "FreeSans" },
+      headStyles: { fontStyle: 'normal' },
+      head: [columns.filter(c => !c.render).map(c => c.title)],
+      body: data.map(r => columns.filter(c => !c.render).map(c => objectPath.get(r, c.dataIndex as objectPath.Path))),
       theme: pdfTheme,
     })
 

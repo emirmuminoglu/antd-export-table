@@ -1,7 +1,7 @@
 {
   "name": "antd-export-table",
   "description": "Export ant.design tables as Excel, CSV and PDF",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "dist/index.js",
   "license": "MIT",
   "repository": "github:emirmuminoglu/antd-export-table",

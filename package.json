@@ -1,0 +1,19 @@
+{
+  "name": "antd-export-table",
+  "description": "",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "author": "Emir Müminoğlu",
+  "dependencies": {
+    "@types/file-saver": "^2.0.5",
+    "@types/object-path": "^0.11.1",
+    "antd": "^4.22.4",
+    "better-xlsx": "^0.7.6",
+    "file-saver": "^2.0.5",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
+    "object-path": "^0.11.8"
+  }
+}
